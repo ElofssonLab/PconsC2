@@ -1,0 +1,14 @@
+46c46
+< our $v=3;              # verbose mode
+---
+> our $v=2;              # verbose mode
+238d237
+< 	`cp $tmpfile.ss2 $inbase.ss2`;
+395c394
+<     # &HHPaths::System("rm $tmpfile.mtx $tmpfile.ss $tmpfile.ss2");
+---
+>     &HHPaths::System("rm $tmpfile.mtx $tmpfile.ss $tmpfile.ss2");
+454c453
+<     if ($v<=3) { unlink(split ' ', "$tmpfile.pn $tmpfile.sn $tmpfile.mn $tmpfile.chk $tmpfile.blalog $tmpfile.mtx $tmpfile.aux $tmpfile.ss $tmpfile.sq");}
+---
+>     if ($v<=3) { unlink(split ' ', "$tmpfile.pn $tmpfile.sn $tmpfile.mn $tmpfile.chk $tmpfile.blalog $tmpfile.mtx $tmpfile.aux $tmpfile.ss $tmpfile.ss2 $tmpfile.sq");}
