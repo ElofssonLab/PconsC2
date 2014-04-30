@@ -168,14 +168,22 @@ def main(hhblitsdb, jackhmmerdb, seqfile, n_cores=1, layers=5):
 
     sspredictionname = seqfile + '.horiz'
 
-    sys.stderr.write("Predicting layer 0...\n")
-    result_i_name = seqfile + '.layer0.out'
-    l = [os.path.dirname(os.path.abspath(sys.argv[0])) + '/src/predict-Sl0.py']
+    result_i_name = seqfile + '.pconsc2.out'
+    l = [os.path.dirname(os.path.abspath(sys.argv[0])) + '/src/predict2.py']
     l.extend(jhpredictionnames)
     l.extend(hhpredictionnames)
-    l.extend([netsurfpredictionname, sspredictionname, result_i_name])
+    l.extend([netsurfpredictionname, sspredictionname, seqfile + '.hhE0.a3m', result_i_name])
     check_output(l)
 
+    # plot the top L*1.0 contacts in a contact map
+    # those contacts are later used during protein folding
+    if os.path.exists('native.pdb'):
+        plot_map(seqfile, result_i_name, 1, psipred_filename=sspredictionname, pdb_filename='native.pdb')
+    else:
+        plot_map(seqfile, result_i_name, 1, psipred_filename=sspredictionname)
+
+
+    """
     # plot the top L*1.5 contacts in a contact map
     # those contacts are later used during protein folding
     if os.path.exists('native.pdb'):
@@ -200,7 +208,7 @@ def main(hhblitsdb, jackhmmerdb, seqfile, n_cores=1, layers=5):
             plot_map(seqfile, result_i_name, 1, psipred_filename=sspredictionname, pdb_filename='native.pdb')
         else:
             plot_map(seqfile, result_i_name, 1, psipred_filename=sspredictionname)
-
+    """
 
 
 if __name__ == "__main__":
