@@ -24,7 +24,7 @@ __Make sure__ all dependencies are working correctly and adjust the paths in `lo
 
 To run PconsC2 use:
 ```
-./pconsc2.py [-c n_cores] [-l n_layers] [--pconsc1]
+./run_pconsc.py [-c n_cores] [-l n_layers] [--pconsc1]
              hhblits_database jackhmmer_database sequence_file
 ```
 - Required:
