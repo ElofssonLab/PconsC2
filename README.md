@@ -24,21 +24,16 @@ __Make sure__ all dependencies are working correctly and adjust the paths in `lo
 
 To run PconsC2 use:
 ```
-./pconsc2.py [-c n_cores] hhblits_database 
-             jackhmmer_database sequence_file
+./pconsc2.py [-c n_cores] [-l n_layers] [--pconsc1]
+             hhblits_database jackhmmer_database sequence_file
 ```
 - Required:
   - `hhblits_database` and `jackhmmer_database` are paths to the databases used by HHblits and Jackhmmer
   - `sequence_file` is the path to the input protein sequence in FASTA format (only single sequences). 
 - Optional:
   - `n_cores` specifies the number of cores to use during computation (default: number of available cores). 
+  - `n_layers` is the number of layers of deep-learning being used (default: 5)
+  - `--pconsc1` flag runs PconsC1 instead of PconsC2
 
 ---
-
-
-You can also __run PconsC1__ with this command:
-```
-./pconsc1.py [-c n_cores] hhblits_database 
-             jackhmmer_database sequence_file
-```
 
