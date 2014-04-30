@@ -1,0 +1,44 @@
+PconsC2
+=======
+
+Improved contact predictions using the recognition of protein like contact patterns.
+
+
+## Dependencies:
+
+- [NetSurfP 1.1](http://www.cbs.dtu.dk/services/NetSurfP/)
+- [PSIPRED v3.5](http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/)
+- [Jackhmmer from HMMER v3.0 or higher](http://hmmer.janelia.org/)
+- [HHblits from HHsuite v2.0.16](http://toolkit.tuebingen.mpg.de/hhblits)
+- [PSICOV v1.11](http://bioinfadmin.cs.ucl.ac.uk/downloads/PSICOV/)
+- [plmDCA symmetric v2](http://plmdca.csc.kth.se/)
+- either MATLAB v8.1 or higher
+- or [MATLAB Compiler Runtime (MCR) v8.1](http://www.mathworks.se/products/compiler/mcr/)
+
+MATLAB is needed to run plmDCA. However, if MATLAB is not available you can also use a compiled version of plmDCA. For the compiled version to run you need to provide a path to MCR.
+
+
+## How to run it:
+
+__Make sure__ all dependencies are working correctly and adjust the paths in `localconfig.py`.
+
+To run PconsC2 use:
+```
+./pconsc2.py [-c n_cores] hhblits_database 
+             jackhmmer_database sequence_file
+```
+- Required:
+  - `hhblits_database` and `jackhmmer_database` are paths to the databases used by HHblits and Jackhmmer
+  - `sequence_file` is the path to the input protein sequence in FASTA format (only single sequences). 
+- Optional:
+  - `n_cores` specifies the number of cores to use during computation (default: number of available cores). 
+
+---
+
+
+You can also __run PconsC1__ with this command:
+```
+./pconsc1.py [-c n_cores] hhblits_database 
+             jackhmmer_database sequence_file
+```
+
