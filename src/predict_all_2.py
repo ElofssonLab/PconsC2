@@ -168,11 +168,17 @@ def main(hhblitsdb, jackhmmerdb, seqfile, n_cores=1, layers=5):
 
     sspredictionname = seqfile + '.horiz'
 
+    pssmaliname =  seqfile + '.hhE0.a3m'
+    if not os.path.exists(pssmaliname):
+        sys.stderr.write(str(datetime.now()) + ' HHblits E0: generating alignment for PSSM feature\nThis may take quite a few minutes!\n ')
+        t = check_output([hhblits, '-all', '-oa3m', seqfile + '.hhE0.a3m', '-e', '1', '-cpu', str(n_cores), '-i', seqfile + '.fasta', '-d', hhblitsdb])
+
+
     result_i_name = seqfile + '.pconsc2.out'
     l = [os.path.dirname(os.path.abspath(sys.argv[0])) + '/src/predict2.py']
     l.extend(jhpredictionnames)
     l.extend(hhpredictionnames)
-    l.extend([netsurfpredictionname, sspredictionname, seqfile + '.hhE0.a3m', result_i_name])
+    l.extend([netsurfpredictionname, sspredictionname, pssmaliname, result_i_name])
     check_output(l)
 
     # plot the top L*1.0 contacts in a contact map
