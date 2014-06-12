@@ -116,7 +116,7 @@ def run_psicov(seqfile, jhpredictionnames, hhpredictionnames, n_cores=1):
             f.write(t)
             f.close()
 
-        jhpredictionnames.append(seqfile + '.jh' + names[i] + '.psicov')
+        jhpredictionnames[names[i] + 'psicov'] = seqfile + '.jh' + names[i] + '.psicov'
         
         if not exists_hh_psicov:
             #t = check_output([trim, seqfile + '.hh' + names[i] + '.fas'])
@@ -137,7 +137,7 @@ def run_psicov(seqfile, jhpredictionnames, hhpredictionnames, n_cores=1):
             f.write(t)
             f.close()
 
-        hhpredictionnames.append(seqfile + '.hh' + names[i] + '.psicov')
+        hhpredictionnames[names[i] + 'psicov'] = seqfile + '.hh' + names[i] + '.psicov'
 
     return jhpredictionnames, hhpredictionnames
 
@@ -187,7 +187,7 @@ def run_plmdca(seqfile, jhpredictionnames, hhpredictionnames, n_cores=1):
             else:
                 t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + seqfile + '.jh' + names[i] + ".trimmed', '" + seqfile + '.jh' + names[i] + ".plmdca', 0.01, 0.01, 0.1, " + str(n_cores) + "); exit"])
 
-        jhpredictionnames.append(seqfile + '.jh' + names[i] + '.plmdca')
+        jhpredictionnames[names[i] + 'plmdca'] = seqfile + '.jh' + names[i] + '.plmdca'
 
         if not exists_hh_plmdca:
             #t = check_output([trim2, seqfile + '.hh' + names[i] + '.fas'])
@@ -202,13 +202,14 @@ def run_plmdca(seqfile, jhpredictionnames, hhpredictionnames, n_cores=1):
                 t = check_output([plmdca, seqfile + '.hh' + names[i] + ".trimmed", seqfile + '.hh' + names[i] + ".plmdca", "0.01", "0.01", "0.1", str(n_cores)])
             else:
                 t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + seqfile + '.hh' + names[i] + ".trimmed', '" + seqfile + '.hh' + names[i] + ".plmdca', 0.01, 0.01, 0.1, " + str(n_cores) + "); exit"])
-        hhpredictionnames.append(seqfile + '.hh' + names[i] + '.plmdca')
+
+        hhpredictionnames[names[i] + 'plmdca'] = seqfile + '.hh' + names[i] + '.plmdca'
 
     return jhpredictionnames, hhpredictionnames
 
 
 
-def run_pconsc2_dependencies(hhblitsdb, jackhmmerdb, seqfile, n_cores=1):
+def run_pconsc2_dependencies(hhblitsdb, seqfile, n_cores=1):
 
     if not os.path.exists(seqfile):
         sys.stderr.write('\n' + seqfile + 'does not exist\n')
