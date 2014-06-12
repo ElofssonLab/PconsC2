@@ -66,7 +66,7 @@ def run_alignments(hhblitsdb, jackhmmerdb, seqfile, n_cores=1):
         
 
 
-def run_jachhmmer(seqfile, jhpredictionnames, hhpredictionnames, n_cores=1):
+def run_psicov(seqfile, jhpredictionnames, hhpredictionnames, n_cores=1):
 
     if not os.path.exists(seqfile):
         sys.stderr.write('\n' + seqfile + 'does not exist\n')
