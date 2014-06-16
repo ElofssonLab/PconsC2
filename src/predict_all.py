@@ -68,7 +68,7 @@ def main(hhblitsdb, jackhmmerdb, seqfile, n_cores=1, layers=5, pconsc1_flag=Fals
 
     else:
         sys.stderr.write("Running PconsC2...\n")
-        netsurfpredictionname, sspredictionname = prep.run_pconsc2_dependencies(hhblitsdb, seqfile, n_cores=1)
+        netsurfpredictionname, sspredictionname, pssmaliname = prep.run_pconsc2_dependencies(hhblitsdb, seqfile, n_cores=1)
         sys.stderr.write("Predicting...\n")
         result_name = seqfile + '.pconsc2.out'
         l.extend([netsurfpredictionname, sspredictionname, pssmaliname, result_name])

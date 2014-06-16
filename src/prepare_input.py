@@ -170,6 +170,6 @@ def run_pconsc2_dependencies(hhblitsdb, seqfile, n_cores=1):
     pssmaliname =  seqfile + '.hhE0.a3m'
     if not os.path.exists(pssmaliname):
         sys.stderr.write(str(datetime.now()) + ' HHblits E0: generating alignment for PSSM feature\nThis may take quite a few minutes!\n ')
-        t = check_output([hhblits, '-all', '-oa3m', seqfile + '.hhE0.a3m', '-e', '1', '-cpu', str(n_cores), '-i', seqfile + '.fasta', '-d', hhblitsdb])
+        check_output([hhblits, '-all', '-oa3m', pssmaliname, '-e', '1', '-cpu', str(n_cores), '-i', seqfile + '.fasta', '-d', hhblitsdb])
 
-    return netsurfpredictionname, sspredictionname
+    return netsurfpredictionname, sspredictionname, pssmaliname
