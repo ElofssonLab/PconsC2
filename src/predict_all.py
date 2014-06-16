@@ -19,25 +19,33 @@ def check_output(command):
 
 
 def main(hhblitsdb, jackhmmerdb, seqfile, n_cores=1, layers=5, pconsc1_flag=False):
-   
-    prep.run_alignments(hhblitsdb, jackhmmerdb, seqfile, n_cores=1)
+
+    prep.run_alignments(hhblitsdb, jackhmmerdb, seqfile, n_cores=n_cores)
    
     jhpredictionnames = {}
     hhpredictionnames = {}
-    jhpredictionnames, hhpredictionnames = prep.run_psicov(seqfile, jhpredictionnames, hhpredictionnames, n_cores=n_cores)
-    jhpredictionnames, hhpredictionnames = prep.run_plmdca(seqfile, jhpredictionnames, hhpredictionnames, n_cores=n_cores)
+    predictionnames = {}
+    #jhpredictionnames, hhpredictionnames = prep.run_psicov(seqfile, jhpredictionnames, hhpredictionnames, n_cores=n_cores)
+    #jhpredictionnames, hhpredictionnames = prep.run_plmdca(seqfile, jhpredictionnames, hhpredictionnames, n_cores=n_cores)
+    #predictionnames = prep.run_psicov(seqfile, predictionnames, n_cores=n_cores)
+    #predictionnames = prep.run_plmdca(seqfile, predictionnames, n_cores=n_cores)
+    predictionnames = prep.run_contact_pred(seqfile, predictionnames, 'psicov', n_cores=n_cores)
+    predictionnames = prep.run_contact_pred(seqfile, predictionnames, 'plmdca', n_cores=n_cores)
+    print predictionnames
 
     l = [root + '/src/predict2.py']
-    names = ['E4', 'E0', 'E10', 'E40']
+    #names = ['E4', 'E0', 'E10', 'E40']
+    names = ['jhE4', 'jhE0', 'jhE10', 'jhE40', 'hhE4', 'hhE0', 'hhE10', 'hhE40']
     for key in names:
-        l.append(jhpredictionnames[key + 'psicov'])
-        l.append(jhpredictionnames[key + 'plmdca'])
-    for key in names:
-        l.append(hhpredictionnames[key + 'psicov'])
-        l.append(hhpredictionnames[key + 'plmdca'])
+        l.append(predictionnames[key + 'psicov'])
+        l.append(predictionnames[key + 'plmdca'])
+    #for key in names:
+    #    l.append(hhpredictionnames['hh' + key + 'psicov'])
+    #    l.append(hhpredictionnames[key + 'plmdca'])
     print l
 
     if pconsc1_flag:
+        sys.stderr.write("Running PconsC1...\n")
         sys.stderr.write("Predicting...\n")
         l[0] = root + '/src/predict.py'
         results = check_output(l)
@@ -59,7 +67,8 @@ def main(hhblitsdb, jackhmmerdb, seqfile, n_cores=1, layers=5, pconsc1_flag=Fals
                 plot_map(seqfile, seqfile + '.pconsc.out', 1.0)
 
     else:
-        netsurfpredictionname, sspredictionname = run_pconsc2_dependencies(hhblitsdb, seqfile, n_cores=1)
+        sys.stderr.write("Running PconsC2...\n")
+        netsurfpredictionname, sspredictionname = prep.run_pconsc2_dependencies(hhblitsdb, seqfile, n_cores=1)
         sys.stderr.write("Predicting...\n")
         result_name = seqfile + '.pconsc2.out'
         l.extend([netsurfpredictionname, sspredictionname, pssmaliname, result_name])

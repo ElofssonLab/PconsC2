@@ -2,9 +2,15 @@
 from localconfig import *
 from datetime import datetime
 import sys, subprocess, os
+import multiprocessing
+
+
+names = ['jhE4', 'jhE0', 'jhE10', 'jhE40', 'hhE4', 'hhE0', 'hhE10', 'hhE40']
+cutoffs = ['1e-4', '1', '1e-10', '1e-40','1e-4', '1', '1e-10', '1e-40']
 
 
 def check_output(command):
+    print ' '.join(command)
     return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 
 
@@ -37,36 +43,75 @@ def run_alignments(hhblitsdb, jackhmmerdb, seqfile, n_cores=1):
         f2.write('>target\n' + "".join(x[1:]) + '\n')
     f2.close()
 
-    names = ['E4', 'E0', 'E10', 'E40']
-    cutoffs = ['1e-4', '1', '1e-10', '1e-40']
-
-    failed = []
-
-    for i in range(4):
+    for i in range(len(names)):
         
-        exists_jh = os.path.exists(seqfile + '.jh' + names[i] + '.a3m')
-        exists_jh_psicov = os.path.exists(seqfile + '.jh' + names[i] + '.psicov')
-        exists_jh_plmdca = os.path.exists(seqfile + '.jh' + names[i] + '.plmdca')
-        exists_hh = os.path.exists(seqfile + '.hh' + names[i] + '.a3m')
-        exists_hh_psicov = os.path.exists(seqfile + '.hh' + names[i] + '.psicov')
-        exists_hh_plmdca = os.path.exists(seqfile + '.hh' + names[i] + '.plmdca')
+        exists_a3m = os.path.exists(seqfile + '.' + names[i] + '.a3m')
+        exists_psicov = os.path.exists(seqfile + '.' + names[i] + '.psicov')
+        exists_plmdca = os.path.exists(seqfile + '.' + names[i] + '.plmdca')
 
         # only create alignment file if at least one of the contact maps is missing
-        if not exists_jh and (not exists_jh_psicov or not exists_jh_plmdca):
-            sys.stderr.write(str(datetime.now()) + ' jackhmmer ' + names[i] + ': generating alignment\nThis may take quite a few minutes!\n ')
-            t = check_output([jackhmmer, '--cpu', str(n_cores), '-N', '5', '-E', cutoffs[i], '-A', seqfile +'.jh' + names[i] + '.ali', seqfile + '.fasta', jackhmmerdb])
-            check_output([reformat, 'sto', 'a3m', seqfile + '.jh' + names[i] + '.ali', seqfile + '.jh' + names[i] + '.a3m'])
-            check_output(['rm', seqfile + '.jh' + names[i] + '.ali'])
+        if not exists_a3m and (not exists_psicov or not exists_plmdca):
+            if 'jh' in names[i]:
+                sys.stderr.write(str(datetime.now()) + ' ' + names[i] + ': generating Jackhmmer alignment\nThis may take quite a few minutes!\n ')
+                t = check_output([jackhmmer, '--cpu', str(n_cores), '-N', '5', '-E', cutoffs[i], '-A', seqfile +'.' + names[i] + '.ali', seqfile + '.fasta', jackhmmerdb])
+                check_output([reformat, 'sto', 'a3m', seqfile + '.' + names[i] + '.ali', seqfile + '.' + names[i] + '.a3m'])
+                check_output(['rm', seqfile + '.' + names[i] + '.ali'])
 
-        # only create alignment file if at least one of the contact maps is missing
-        if not exists_hh and (not exists_hh_psicov or not exists_hh_plmdca):
-            sys.stderr.write(str(datetime.now()) + ' HHblits' + names[i] + ': generating alignment\nThis may take quite a few minutes!\n ')
-            t = check_output([hhblits, '-all', '-oa3m', seqfile + '.hh' + names[i] + '.a3m', '-e', cutoffs[i], '-cpu', str(n_cores), '-i', seqfile + '.fasta', '-d', hhblitsdb])
-            #check_output([reformat, 'a3m', 'fas', seqfile + '.hh' + names[i] + '.a3m', seqfile + '.hh' + names[i] + '.fas'])
+            elif 'hh' in names[i]:
+                sys.stderr.write(str(datetime.now()) + ' ' + names[i] + ': generating HHblits alignment\nThis may take quite a few minutes!\n ')
+                t = check_output([hhblits, '-all', '-oa3m', seqfile + '.' + names[i] + '.a3m', '-e', cutoffs[i], '-cpu', str(n_cores), '-i', seqfile + '.fasta', '-d', hhblitsdb])
         
 
 
-def run_psicov(seqfile, jhpredictionnames, hhpredictionnames, n_cores=1):
+def run_cpred_job(i, seqfile, method):
+
+        c_fname = seqfile + '.' + names[i] + '.' + method
+        exists_cfile = os.path.exists(c_fname)
+
+        if not exists_cfile:
+            if method == 'plmdca':
+                input_fname = seqfile + '.' + names[i] + '.trimmed'
+                t = check_output([trim2trimmed, seqfile + '.' + names[i] + '.a3m'])
+                f = open(input_fname, 'w')
+                f.write(t)
+                f.close()
+
+                sys.stderr.write(str(datetime.now()) + ' ' + names[i] + ': running plmDCA\nThis may take more than an hour.\n')
+                if plmdca:
+                    #t = check_output([plmdca, matlabdir, seqfile + '.jh' + names[i] + ".trimmed", seqfile + '.jh' + names[i] + ".plmdca", "0.01", "0.01", "0.1", str(n_cores)])
+                    #t = check_output([plmdca, input_fname, c_fname, "0.01", "0.01", "0.1", str(n_cores)])
+                    t = check_output([plmdca, input_fname, c_fname, "0.01", "0.01", "0.1", "1"])
+                else:
+                    #t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + seqfile + '.' + names[i] + ".trimmed', '" + seqfile + '.' + names[i] + ".plmdca', 0.01, 0.01, 0.1, " + str(n_cores) + "); exit"])
+                    t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + input_fname  + "', '" + c_fname + "', 0.01, 0.01, 0.1, 1); exit"])
+                    #t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + seqfile + '.hh' + names[i] + ".trimmed', '" + seqfile + '.hh' + names[i] + ".plmdca', 0.01, 0.01, 0.1, " + str(n_cores) + "); exit"])
+
+            elif method == 'psicov':
+                input_fname = seqfile + '.' + names[i] + '.jones'
+                t = check_output([trim2jones, seqfile + '.' + names[i] + '.a3m'])
+                f = open(input_fname, 'w')
+                f.write(t)
+                f.close()
+
+                t = ''
+                sys.stderr.write(str(datetime.now()) + ' ' + names[i] + ': running PSICOV\nThis may take more than an hour.\n')
+                try:
+                    # Joel @ NSC: Added -o flag, in case the psicov binary has not
+                    # been compiled with MINEFSEQS=0.
+                    t = check_output([psicov, '-o', input_fname])
+                except:
+                    t = ''
+                f = open(c_fname, 'w')
+                f.write(t)
+                f.close()
+
+            else:
+                sys.stderr.write('\nWrong method string!\n Must be one of ["psicov", "plmdca"]\n')
+                sys.exit(0)
+
+
+
+def run_contact_pred(seqfile, predictionnames, method, n_cores=1):
 
     if not os.path.exists(seqfile):
         sys.stderr.write('\n' + seqfile + 'does not exist\n')
@@ -87,125 +132,17 @@ def run_psicov(seqfile, jhpredictionnames, hhpredictionnames, n_cores=1):
         f2.write('>target\n' + "".join(x[1:]) + '\n')
     f2.close()
 
-    names = ['E4', 'E0', 'E10', 'E40']
-    cutoffs = ['1e-4', '1', '1e-10', '1e-40']
+    pool = multiprocessing.Pool(n_cores)
 
-    failed = []
-
-    for i in range(4):
+    for i in range(len(names)):
+        c_fname = seqfile + '.' + names[i] + '.' + method
+        predictionnames[names[i] + method] = c_fname
+        pool.apply_async(run_cpred_job, [i, seqfile, method])
         
-        exists_jh_psicov = os.path.exists(seqfile + '.jh' + names[i] + '.psicov')
-        exists_hh_psicov = os.path.exists(seqfile + '.hh' + names[i] + '.psicov')
+    pool.close()
+    pool.join()
 
-        if not exists_jh_psicov:
-            #t = check_output([trim, seqfile + '.jh' + names[i] + '.fas'])
-            t = check_output([trim2jones, seqfile + '.jh' + names[i] + '.a3m'])
-            f = open(seqfile + '.jh' + names[i] + '.jones', 'w')
-            f.write(t)
-            f.close()
-
-            t = ''
-            sys.stderr.write(str(datetime.now()) + ' jackhmmer ' + names[i] + ': running PSICOV\nThis may take more than an hour.\n')
-            try:
-                # Joel @ NSC: Added -o flag, in case the psicov binary has not
-                # been compiled with MINEFSEQS=0.
-                t = check_output([psicov, '-o', seqfile + '.jh' + names[i] + '.jones'])
-            except:
-                t = ''
-            f = open(seqfile + '.jh' + names[i] + '.psicov', 'w')
-            f.write(t)
-            f.close()
-
-        jhpredictionnames[names[i] + 'psicov'] = seqfile + '.jh' + names[i] + '.psicov'
-        
-        if not exists_hh_psicov:
-            #t = check_output([trim, seqfile + '.hh' + names[i] + '.fas'])
-            t = check_output([trim2jones, seqfile + '.hh' + names[i] + '.a3m'])
-            f = open(seqfile + '.hh' + names[i] + '.jones', 'w')
-            f.write(t)
-            f.close()
-            
-            sys.stderr.write(str(datetime.now()) + ' HHblits ' + names[i] + ': running PSICOV\nThis may take more than an hour.\n')
-            t = ''
-            try:
-                # Joel @ NSC: Added -o flag, in case the psicov binary has not
-                # been compiled with MINEFSEQS=0.
-                t = check_output([psicov, '-o', seqfile + '.hh' + names[i] + '.jones'])
-            except:
-                t = ''
-            f = open(seqfile + '.hh' + names[i] + '.psicov', 'w')
-            f.write(t)
-            f.close()
-
-        hhpredictionnames[names[i] + 'psicov'] = seqfile + '.hh' + names[i] + '.psicov'
-
-    return jhpredictionnames, hhpredictionnames
-
-
-
-def run_plmdca(seqfile, jhpredictionnames, hhpredictionnames, n_cores=1):
-
-    if not os.path.exists(seqfile):
-        sys.stderr.write('\n' + seqfile + 'does not exist\n')
-        sys.exit(0)
-
-    f = open(seqfile).read()
-
-    if os.path.exists(seqfile + '.fasta'):
-        subprocess.call(['mv', seqfile + '.fasta', seqfile +'.bak'])
-
-    f2 = open(seqfile +'.fasta', 'w')
-    if f[0] != '>':
-        f2.write('>target\n' + f +'\n')
-    else:
-        x = f.split('\n')
-        if len(x[0]) > 6:
-            target = x[0][1:5] + x[0][6]
-        f2.write('>target\n' + "".join(x[1:]) + '\n')
-    f2.close()
-
-    names = ['E4', 'E0', 'E10', 'E40']
-    cutoffs = ['1e-4', '1', '1e-10', '1e-40']
-
-    failed = []
-
-    for i in range(4):
-        
-        exists_jh_plmdca = os.path.exists(seqfile + '.jh' + names[i] + '.plmdca')
-        exists_hh_plmdca = os.path.exists(seqfile + '.hh' + names[i] + '.plmdca')
-
-        if not exists_jh_plmdca:
-            t = check_output([trim2trimmed, seqfile + '.jh' + names[i] + '.a3m'])
-            f = open(seqfile + '.jh' + names[i] + '.trimmed', 'w')
-            f.write(t)
-            f.close()
-
-            sys.stderr.write(str(datetime.now()) + ' jackhmmer ' + names[i] + ': running plmDCA\nThis may take more than an hour.\n')
-            if plmdca:
-                #t = check_output([plmdca, matlabdir, seqfile + '.jh' + names[i] + ".trimmed", seqfile + '.jh' + names[i] + ".plmdca", "0.01", "0.01", "0.1", str(n_cores)])
-                t = check_output([plmdca, seqfile + '.jh' + names[i] + ".trimmed", seqfile + '.jh' + names[i] + ".plmdca", "0.01", "0.01", "0.1", str(n_cores)])
-            else:
-                t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + seqfile + '.jh' + names[i] + ".trimmed', '" + seqfile + '.jh' + names[i] + ".plmdca', 0.01, 0.01, 0.1, " + str(n_cores) + "); exit"])
-
-        jhpredictionnames[names[i] + 'plmdca'] = seqfile + '.jh' + names[i] + '.plmdca'
-
-        if not exists_hh_plmdca:
-            #t = check_output([trim2, seqfile + '.hh' + names[i] + '.fas'])
-            t = check_output([trim2trimmed, seqfile + '.hh' + names[i] + '.a3m'])
-            f = open(seqfile + '.hh' + names[i] + '.trimmed', 'w')
-            f.write(t)
-            f.close()
-
-            sys.stderr.write(str(datetime.now()) + ' HHblits ' + names[i] + ': running plmDCA\nThis may take more than an hour.\n')
-            if plmdca:
-                #t = check_output([plmdca, matlabdir, seqfile + '.hh' + names[i] + ".trimmed", seqfile + '.hh' + names[i] + ".plmdca", "0.01", "0.01", "0.1", str(n_cores)])
-                t = check_output([plmdca, seqfile + '.hh' + names[i] + ".trimmed", seqfile + '.hh' + names[i] + ".plmdca", "0.01", "0.01", "0.1", str(n_cores)])
-            else:
-                t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + seqfile + '.hh' + names[i] + ".trimmed', '" + seqfile + '.hh' + names[i] + ".plmdca', 0.01, 0.01, 0.1, " + str(n_cores) + "); exit"])
-
-        hhpredictionnames[names[i] + 'plmdca'] = seqfile + '.hh' + names[i] + '.plmdca'
-
-    return jhpredictionnames, hhpredictionnames
+    return predictionnames
 
 
 
