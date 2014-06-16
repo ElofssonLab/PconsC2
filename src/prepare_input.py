@@ -111,7 +111,9 @@ def run_cpred_job(i, seqfile, method):
 
 
 
-def run_contact_pred(seqfile, predictionnames, method, n_cores=1):
+def run_contact_pred(seqfile, method, n_cores=1):
+
+    predictionnames = {}
 
     if not os.path.exists(seqfile):
         sys.stderr.write('\n' + seqfile + 'does not exist\n')
