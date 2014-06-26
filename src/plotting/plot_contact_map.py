@@ -274,7 +274,7 @@ def plot_map(fasta_filename, c_filename, factor, c2_filename='', psipred_filenam
             sc = ax.scatter(contacts_x[::-1], contacts_y[::-1], marker='o', c=tp_colors[::-1], linewidths=0.0)
             sc = ax.scatter(contacts_y[::-1], contacts_x[::-1], marker='o', c=tp_colors[::-1], linewidths=0.0)
         else:
-            fig.suptitle('%s (%s)' % (acc, c_filename))
+            #fig.suptitle('%s (%s)' % (acc, c_filename))
             #sc = ax.scatter(contacts_x[::-1], contacts_y[::-1], marker='o', c=scores[::-1], s=6, alpha=0.75, cmap=cm.jet, linewidths=0.5)
             #sc = ax.scatter(contacts_y[::-1], contacts_x[::-1], marker='o', c=scores[::-1], s=6, alpha=0.75, cmap=cm.jet, linewidths=0.5)
             sc = ax.scatter(contacts_x[::-1], contacts_y[::-1], marker='o', c='#004F9D', edgecolor='#004F9D', s=8, linewidths=0.5)
