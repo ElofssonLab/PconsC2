@@ -21,7 +21,7 @@ Skwark M.J., Raimondi D., Michel M.. and Elofsson A.
 
 if len(sys.argv) < 4:
     sys.stderr.write('Incorrect number of command line arguments.\n')
-    sys.stderr.write('Usage: ' + sys.argv[0] + ' [-c n_cores] [-l n_layers] [--pconsc1] <hhblits db> <jackhmmer db> <sequence file>\n\n')
+    sys.stderr.write('Usage: ' + sys.argv[0] + ' [-c n_cores] [-p n_plmdca_jobs] [--pconsc1] <hhblits db> <jackhmmer db> <sequence file>\n\n')
     sys.exit(0)
 
 from localconfig import *
@@ -103,7 +103,7 @@ sys.stderr.write('Dependencies OK.\n')
 
 ### parse parameters
 pconsc1_flag = False
-layers = 5
+n_plmdca_jobs = min(2, n_cores)
 
 if '-c' in sys.argv:
     idx = sys.argv.index('-c')
@@ -115,12 +115,12 @@ if '-c' in sys.argv:
     del sys.argv[idx]
     del sys.argv[idx]
 
-if '-l' in sys.argv:
-    idx = sys.argv.index('-l')
+if '-p' in sys.argv:
+    idx = sys.argv.index('-p')
     try:
-        layers = int(sys.argv[idx+1])
+        n_plmdca_jobs = int(sys.argv[idx+1])
     except:
-        print 'Number of layers -l must be an integer, %r is not. Default is %s.' % (sys.argv[idx+1], layers)
+        print 'Number of plmDCA jobs -p must be an integer, %r is not. Default is %s.' % (sys.argv[idx+1], n_plmdca_jobs)
         sys.exit(1)
     del sys.argv[idx]
     del sys.argv[idx]
@@ -136,4 +136,5 @@ seqfile = os.path.abspath(sys.argv[3])
 
 shutil.copyfile(root + 'localconfig.py', root + 'src/localconfig.py')
 
-predict_all.main(hhblitsdb, jackhmmerdb, seqfile, n_cores=n_cores, pconsc1_flag=pconsc1_flag)
+predict_all.main(hhblitsdb, jackhmmerdb, seqfile, n_cores=n_cores, n_plmdca_jobs=n_plmdca_jobs, pconsc1_flag=pconsc1_flag)
+#predict_all_2.main(hhblitsdb, jackhmmerdb, seqfile, n_cores=n_cores)

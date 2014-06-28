@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from localconfig import *
 from datetime import datetime
-import sys, subprocess, os
+import sys, subprocess, os, math
 import multiprocessing
 
 
@@ -63,10 +63,12 @@ def run_alignments(hhblitsdb, jackhmmerdb, seqfile, n_cores=1):
         
 
 
-def run_cpred_job(i, seqfile, method):
+def run_cpred_job(i, seqfile, method, n_cores, n_jobs):
 
         c_fname = seqfile + '.' + names[i] + '.' + method
         exists_cfile = os.path.exists(c_fname)
+
+        plmdca_cores = int(math.floor(n_cores/n_jobs))
 
         if not exists_cfile:
             if method == 'plmdca':
@@ -80,10 +82,10 @@ def run_cpred_job(i, seqfile, method):
                 if plmdca:
                     #t = check_output([plmdca, matlabdir, seqfile + '.jh' + names[i] + ".trimmed", seqfile + '.jh' + names[i] + ".plmdca", "0.01", "0.01", "0.1", str(n_cores)])
                     #t = check_output([plmdca, input_fname, c_fname, "0.01", "0.01", "0.1", str(n_cores)])
-                    t = check_output([plmdca, input_fname, c_fname, "0.01", "0.01", "0.1", "1"])
+                    t = check_output([plmdca, input_fname, c_fname, "0.01", "0.01", "0.1", str(plmdca_cores)])
                 else:
                     #t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + seqfile + '.' + names[i] + ".trimmed', '" + seqfile + '.' + names[i] + ".plmdca', 0.01, 0.01, 0.1, " + str(n_cores) + "); exit"])
-                    t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + input_fname  + "', '" + c_fname + "', 0.01, 0.01, 0.1, 1); exit"])
+                    t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + input_fname  + "', '" + c_fname + "', 0.01, 0.01, 0.1, " + str(plmdca_cores) + "); exit"])
                     #t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + seqfile + '.hh' + names[i] + ".trimmed', '" + seqfile + '.hh' + names[i] + ".plmdca', 0.01, 0.01, 0.1, " + str(n_cores) + "); exit"])
 
             elif method == 'psicov':
@@ -111,7 +113,7 @@ def run_cpred_job(i, seqfile, method):
 
 
 
-def run_contact_pred(seqfile, method, n_cores=1):
+def run_contact_pred(seqfile, method, n_cores=1, n_jobs=1):
 
     predictionnames = {}
 
@@ -134,12 +136,11 @@ def run_contact_pred(seqfile, method, n_cores=1):
         f2.write('>target\n' + "".join(x[1:]) + '\n')
     f2.close()
 
-    pool = multiprocessing.Pool(n_cores)
-
+    pool = multiprocessing.Pool(n_jobs)
     for i in range(len(names)):
         c_fname = seqfile + '.' + names[i] + '.' + method
         predictionnames[names[i] + method] = c_fname
-        pool.apply_async(run_cpred_job, [i, seqfile, method])
+        pool.apply_async(run_cpred_job, [i, seqfile, method, n_cores, n_jobs])
         
     pool.close()
     pool.join()
