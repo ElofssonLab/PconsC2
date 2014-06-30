@@ -21,7 +21,7 @@ Skwark M.J., Raimondi D., Michel M.. and Elofsson A.
 
 if len(sys.argv) < 4:
     sys.stderr.write('Incorrect number of command line arguments.\n')
-    sys.stderr.write('Usage: ' + sys.argv[0] + ' [-c n_cores] [--p_psi n_psicov_jobs] [--p_plm n_plmdca_jobs] [--pconsc1] <hhblits db> <jackhmmer db> <sequence file>\n\n')
+    sys.stderr.write('Usage: ' + sys.argv[0] + ' [-c <n_cores>] [--p_psi <n_psicov_jobs>] [--p_plm <n_plmdca_jobs>] [--pconsc1] <hhblits db> <jackhmmer db> <sequence file>\n\n')
     sys.exit(0)
 
 from localconfig import *
