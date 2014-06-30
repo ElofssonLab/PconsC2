@@ -17,12 +17,12 @@ def check_output(command):
     return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 
 
-def main(hhblitsdb, jackhmmerdb, seqfile, n_cores=1, n_plmdca_jobs=1, layers=5, pconsc1_flag=False):
+def main(hhblitsdb, jackhmmerdb, seqfile, n_cores=1, n_jobs=1, layers=5, pconsc1_flag=False):
 
     prep.run_alignments(hhblitsdb, jackhmmerdb, seqfile, n_cores=n_cores)
    
-    psicovnames = prep.run_contact_pred(seqfile, 'psicov', n_cores=n_cores, n_jobs=n_cores)
-    plmdcanames = prep.run_contact_pred(seqfile, 'plmdca', n_cores=n_cores, n_jobs=n_plmdca_jobs)
+    psicovnames = prep.run_contact_pred(seqfile, 'psicov', n_cores=n_cores, n_jobs=n_jobs)
+    plmdcanames = prep.run_contact_pred(seqfile, 'plmdca', n_cores=n_cores, n_jobs=n_jobs)
     predictionnames = dict(psicovnames.items() + plmdcanames.items())
 
     l = [root + '/src/predict2.py']
