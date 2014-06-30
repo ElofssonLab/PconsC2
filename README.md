@@ -24,7 +24,8 @@ __Make sure__ all dependencies are working correctly and adjust the paths in `lo
 
 To run PconsC2 use:
 ```
-./run_pconsc.py [-c n_cores] [-p n_plmdca_jobs] [--pconsc1]
+./run_pconsc.py [-c n_cores] [--p_plm n_plmdca_jobs] 
+             [--p_psi <n_psicov_jobs>] [--pconsc1]
              hhblits_database jackhmmer_database sequence_file
 ```
 - Required:
@@ -33,6 +34,7 @@ To run PconsC2 use:
 - Optional:
   - `n_cores` specifies the number of cores to use during computation (default: number of available cores). 
   - `n_plmdca_jobs` specifies the number of plmDCA instances run in parallel (default: min(2, n_cores)).
+  - `n_psicov_jobs` specifies the number of PSICOV instances run in parallel (default: min(2, n_cores)).
   - `--pconsc1` flag runs PconsC1 instead of PconsC2
 
 ---
