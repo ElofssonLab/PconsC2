@@ -103,7 +103,8 @@ sys.stderr.write('Dependencies OK.\n')
 
 ### parse parameters
 pconsc1_flag = False
-n_jobs = min(2, n_cores)
+n_jobs_plm = min(2, n_cores)
+n_jobs_psi = min(2, n_cores)
 
 if '-c' in sys.argv:
     idx = sys.argv.index('-c')
@@ -115,12 +116,22 @@ if '-c' in sys.argv:
     del sys.argv[idx]
     del sys.argv[idx]
 
-if '-p' in sys.argv:
-    idx = sys.argv.index('-p')
+if '--p_plm' in sys.argv:
+    idx = sys.argv.index('--p_plm')
     try:
-        n_jobs = int(sys.argv[idx+1])
+        n_jobs_plm = int(sys.argv[idx+1])
     except:
-        print 'Number of jobs -p must be an integer, %r is not. Default is %s.' % (sys.argv[idx+1], n_jobs)
+        print 'Number of parallel plmDCA jobs --p_plm must be an integer, %r is not. Default is %s.' % (sys.argv[idx+1], n_jobs_plm)
+        sys.exit(1)
+    del sys.argv[idx]
+    del sys.argv[idx]
+
+if '--p_psi' in sys.argv:
+    idx = sys.argv.index('--p_psi')
+    try:
+        n_jobs_psi = int(sys.argv[idx+1])
+    except:
+        print 'Number of parallel PSICOV jobs -p_psi must be an integer, %r is not. Default is %s.' % (sys.argv[idx+1], n_jobs_psi)
         sys.exit(1)
     del sys.argv[idx]
     del sys.argv[idx]
@@ -136,5 +147,5 @@ seqfile = os.path.abspath(sys.argv[3])
 
 shutil.copyfile(root + 'localconfig.py', root + 'src/localconfig.py')
 
-predict_all.main(hhblitsdb, jackhmmerdb, seqfile, n_cores=n_cores, n_jobs=n_jobs, pconsc1_flag=pconsc1_flag)
+predict_all.main(hhblitsdb, jackhmmerdb, seqfile, n_cores=n_cores, n_jobs_plm=n_jobs_plm, n_jobs_psi=n_jobs_psi, pconsc1_flag=pconsc1_flag)
 #predict_all_2.main(hhblitsdb, jackhmmerdb, seqfile, n_cores=n_cores)
