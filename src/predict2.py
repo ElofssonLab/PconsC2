@@ -181,17 +181,17 @@ for s in pairlist:
         except:
             q.append(0)
 
-        for i in range(-4, 5):
-                try:
-                        q.extend(SSdict[s[0]] )
-                except:
-                        q.extend([0,0,0])
+    for i in range(-4, 5):
+        try:
+            q.extend(SSdict[s[0]] )
+        except:
+            q.extend([0,0,0])
 
-        for i in range(-4, 5):
-                try:
-                        q.extend(SSdict[s[1]] )
-                except:
-                        q.extend([0,0,0])
+    for i in range(-4, 5):
+        try:
+            q.extend(SSdict[s[1]] )
+        except:
+            q.extend([0,0,0])
     
     for i in range(-4, 5):
         try:
@@ -235,17 +235,17 @@ for layer in range(1,6):
             except:
                 q.append(0)
 
-            for i in range(-4, 5):
-                    try:
-                            q.extend(SSdict[s[0]] )
-                    except:
-                            q.extend([0,0,0])
+        for i in range(-4, 5):
+            try:
+                q.extend(SSdict[s[0]] )
+            except:
+                q.extend([0,0,0])
 
-            for i in range(-4, 5):
-                    try:
-                            q.extend(SSdict[s[1]] )
-                    except:
-                            q.extend([0,0,0])
+        for i in range(-4, 5):
+            try:
+                q.extend(SSdict[s[1]] )
+            except:
+                q.extend([0,0,0])
     
         for i in range(-4, 5):
             try:
@@ -262,12 +262,11 @@ for layer in range(1,6):
         q.extend(pssm[s[0]])
         q.extend(pssm[s[1]])
         for i in range(-5,6):
-                for j in range(-5, 6):
-                        try:
-                                q.append(previouslayer[(s[0] + i, s[1] + j)])
-                        except Exception as e:
-#                   sys.stderr.write(str(e) + '\n')
-                                q.append(-3)
+            for j in range(-5, 6):
+                try:
+                    q.append(previouslayer[(s[0] + i, s[1] + j)])
+                except Exception as e:
+                    q.append(-3)
         X.append(q)
         Y.append(s)
 
