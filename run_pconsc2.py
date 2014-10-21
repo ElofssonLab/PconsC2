@@ -140,11 +140,12 @@ if '--pconsc1' in sys.argv:
     pconsc1_flag = True
     del sys.argv[idx]
 
+# set absolute paths to input databases and query sequence
 hhblitsdb = os.path.abspath(sys.argv[1])
 jackhmmerdb = os.path.abspath(sys.argv[2])
 seqfile = os.path.abspath(sys.argv[3])
 
 shutil.copyfile(root + 'localconfig.py', root + 'src/localconfig.py')
 
+# run contact prediction
 predict_all.main(hhblitsdb, jackhmmerdb, seqfile, n_cores=n_cores, n_jobs_plm=n_jobs_plm, n_jobs_psi=n_jobs_psi, pconsc1_flag=pconsc1_flag)
-#predict_all_2.main(hhblitsdb, jackhmmerdb, seqfile, n_cores=n_cores)
