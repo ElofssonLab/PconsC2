@@ -26,7 +26,6 @@ if len(sys.argv) < 4:
 
 from localconfig import *
 from src import predict_all
-from src import predict_all_2
 
 sys.stderr.write('\nTesting dependencies...\n')
 
