@@ -36,6 +36,7 @@ try:
     f.close()
 except Exception as e:
     sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
+    sys.stderr.write(jackhmmer + ' -h \n\n')
     sys.stderr.write('Chosen jackhmmer binary does not seem to work!\n')
     sys.exit(1)
 
@@ -47,6 +48,7 @@ try:
     pass
 except:
     sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
+    sys.stderr.write(hhblist + ' -h \n\n')
     sys.stderr.write('Chosen HHblits binary does not seem to work!\n')
     sys.exit(1)
 
@@ -57,6 +59,7 @@ try:
     f.close()
 except Exception as e:
     sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
+    sys.stderr.write(psicov + root + '/extras/psicovtest.fas \n\n')
     sys.stderr.write('Chosen PSICOV binary does not seem to work!\n')
     sys.exit(1)
 
@@ -78,6 +81,7 @@ if plmdca:
         f.close()
     except Exception as e:
         sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
+        sys.stderr.write(plmdca +  ' -h \n\n')
         sys.stderr.write('Chosen plmdca binary does not seem to work!\n')
         sys.exit(1)
 elif matlab:
@@ -88,6 +92,7 @@ elif matlab:
     except:
         sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
         sys.stderr.write('Chosen MATLAB binary does not seem to work!\n')
+        sys.stderr.write(matlab + ' -h \n\n')
         sys.stderr.write('You can get MCR \n')
         sys.stderr.write('http://www.mathworks.se/products/compiler/mcr/\n')
         sys.exit(1)
