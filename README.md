@@ -6,6 +6,7 @@ Improved contact predictions using the recognition of protein like contact patte
 
 ## Dependencies:
 
+- [Rosetta v3.5 or weekly built](https://www.rosettacommons.org/software)
 - [NetSurfP 1.1](http://www.cbs.dtu.dk/services/NetSurfP/)
 - [PSIPRED v3.5](http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/)
 - [Jackhmmer from HMMER v3.0 or higher](http://hmmer.janelia.org/)
