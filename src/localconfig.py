@@ -13,16 +13,16 @@ if __name__ == '__main__':
 root = os.path.dirname(os.path.abspath(sys.argv[0])) + '/'
 
 ### Working directory ###
-rundir = os.getcwd() + '/'  ## Manual addition
+rundir = os.getcwd() + '/'
 
-if not 'pcons2fold' in root:
-    root += 'pcons2fold/'
+if not 'PconsC2' in root:
+    root += 'PconsC2/'
 
-# Look if PconsC or Rosetta dependencies need to be checked
+# Look if PconsC2 or Rosetta dependencies need to be checked
 rosetta_flag = False
 if 'rosetta' in root:
     rosetta_flag = True
-    root = '/'.join(root.split('/')[:-3]) + '/pconsc/'
+    root = '/'.join(root.split('/')[:-3]) + '/src/'
 
 ########################################################
 ### Please adjust the following paths to your system ###
@@ -93,7 +93,6 @@ psicovfail = True
 if matlab:
     plmdca = None # matlab licence present: do not use compiled version
     plmdcapath = '/home/felix/Software/plmDCA_symmetric_v3'
-    #plmdcapath = '/home/felix/Software/plmDCA_asymmetric_v2'
 else:
     plmdca = root + 'dependencies/plmdca_standalone/2012/build01/bin/plmdca'
     plmdcapath = None
