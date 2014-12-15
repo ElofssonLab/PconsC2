@@ -10,7 +10,7 @@ cutoffs = ['1e-4', '1', '1e-10', '1e-40','1e-4', '1', '1e-10', '1e-40']
 
 
 def check_output(command):
-    print ' '.join(command)
+    #print ' '.join(command)
     return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 
 
@@ -44,7 +44,7 @@ def run_alignments(hhblitsdb, jackhmmerdb, seqfile, n_cores=1):
     f2.close()
 
     for i in range(len(names)):
-        
+
         exists_a3m = os.path.exists(seqfile + '.' + names[i] + '.a3m')
         exists_psicov = os.path.exists(seqfile + '.' + names[i] + '.psicov')
         exists_plmdca = os.path.exists(seqfile + '.' + names[i] + '.plmdca')
@@ -60,7 +60,7 @@ def run_alignments(hhblitsdb, jackhmmerdb, seqfile, n_cores=1):
             elif 'hh' in names[i]:
                 sys.stderr.write(str(datetime.now()) + ' ' + names[i] + ': generating HHblits alignment\nThis may take quite a few minutes!\n ')
                 t = check_output([hhblits, '-all', '-oa3m', seqfile + '.' + names[i] + '.a3m', '-e', cutoffs[i], '-cpu', str(n_cores), '-i', seqfile + '.fasta', '-d', hhblitsdb])
-        
+
 
 
 def run_cpred_job(i, seqfile, method, n_cores, n_jobs):
@@ -69,6 +69,7 @@ def run_cpred_job(i, seqfile, method, n_cores, n_jobs):
         exists_cfile = os.path.exists(c_fname)
 
         plmdca_cores = int(math.floor(n_cores/n_jobs))
+        #plmdca_cores = int(math.floor(6/n_jobs))
 
         if not exists_cfile:
             if method == 'plmdca':
@@ -85,6 +86,7 @@ def run_cpred_job(i, seqfile, method, n_cores, n_jobs):
                     t = check_output([plmdca, input_fname, c_fname, "0.01", "0.01", "0.1", str(plmdca_cores)])
                 else:
                     #t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + seqfile + '.' + names[i] + ".trimmed', '" + seqfile + '.' + names[i] + ".plmdca', 0.01, 0.01, 0.1, " + str(n_cores) + "); exit"])
+                    ### ORIGINAL ###
                     t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + input_fname  + "', '" + c_fname + "', 0.01, 0.01, 0.1, " + str(plmdca_cores) + "); exit"])
                     #t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + seqfile + '.hh' + names[i] + ".trimmed', '" + seqfile + '.hh' + names[i] + ".plmdca', 0.01, 0.01, 0.1, " + str(n_cores) + "); exit"])
 
@@ -141,7 +143,7 @@ def run_contact_pred(seqfile, method, n_cores=1, n_jobs=1):
         c_fname = seqfile + '.' + names[i] + '.' + method
         predictionnames[names[i] + method] = c_fname
         pool.apply_async(run_cpred_job, [i, seqfile, method, n_cores, n_jobs])
-        
+
     pool.close()
     pool.join()
 

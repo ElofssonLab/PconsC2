@@ -5,18 +5,15 @@ import multiprocessing
 import subprocess
 
 if __name__ == '__main__':
-    print 'Please do not run me! Use run_pconsc.py'
+    print 'Please do not run me! Use run_pipeline.py'
     print '\n\tYours sincerely,\n\n\t', sys.argv[0]
     sys.exit(0)
 
 # Directory where PconsC in the distributable package is located
 root = os.path.dirname(os.path.abspath(sys.argv[0])) + '/'
 
-### Working directory ###
-rundir = os.getcwd() + '/'  ## Manual addition
-
-if not 'pcons2fold' in root:
-    root += 'pcons2fold/'
+if not 'pconsc' in root:
+    root += 'pconsc/'
 
 # Look if PconsC or Rosetta dependencies need to be checked
 rosetta_flag = False
@@ -24,42 +21,45 @@ if 'rosetta' in root:
     rosetta_flag = True
     root = '/'.join(root.split('/')[:-3]) + '/pconsc/'
 
+
+
+
+
 ########################################################
 ### Please adjust the following paths to your system ###
 ########################################################
 
 ### Path to root folder of your Rosetta installation ###
 # REQUIRES: Rosetta 3.5 or weekly build
-rosettadir = '/home/felix/Software/rosetta_2014.34.57213_bundle'
+rosettadir = ''
 
 ### Jackhmmer executable ###
-jackhmmer = '/usr/bin/jackhmmer'
+jackhmmer = root + 'dependencies/hmmer-3.0/src/jackhmmer'
 
 ### HHblits executable ###
-hhblits = '/usr/bin/hhblits'
+hhblits = root + 'dependencies/hhsuite-2.0.16/bin/hhblits'
 
 ### PSICOV executable ###
-psicov = '/usr/local/bin/psicov'
-
-### NetSurfP executable ###
-netsurf = '/home/felix/Software/netsurfp-1.0/netsurfp'
-
-### PSIPRED executable ###
-psipred = '/home/felix/Software/psipred/bin/psipred'
-
-### Path to TM-score ###
-# only needed if result should be compared to native structure
-tmscore_binary = '/usr/bin/TMscore'
+psicov = root + 'dependencies/psicov-1.11/psicov'
 
 ### MATLAB executable ###
-# Please set this variable to None if you don't have access to matlab.
-# PconsFold will then try to use the compiled version.
+# Please set this variable to None if you don't have access to matlab. 
+# PconsFold will then try to use the compiled version. 
 #matlab = '/sw/apps/matlab/x86_64/8.1/bin/matlab'
-matlab = '/home/felix/Software/MATLAB/R2014b/bin/matlab'
+matlab = None
 
 ### Path to MATLAB compiler ###
 # Only needed if matlab is not available.
-matlabdir = ''
+matlabdir = '' 
+
+### Path to TM-score ###
+# only needed if result should be compared to native structure
+tmscore_binary = ''
+
+
+
+
+
 
 ########################################################
 ###  Please do not change anything below this line   ###
@@ -88,12 +88,12 @@ n_cores = multiprocessing.cpu_count()
 # Enable work-around for PSICOV not handling low complexity alignments
 psicovfail = True
 
-# Adjust plmdca path to either standalone or compiled,
+# Adjust plmdca path to either standalone or compiled, 
 # depending on presence of matlab.
 if matlab:
     plmdca = None # matlab licence present: do not use compiled version
-    plmdcapath = '/home/felix/Software/plmDCA_symmetric_v3'
-    #plmdcapath = '/home/felix/Software/plmDCA_asymmetric_v2'
+    plmdcapath = root + 'dependencies/plmDCA_symmetric_v2'
 else:
     plmdca = root + 'dependencies/plmdca_standalone/2012/build01/bin/plmdca'
     plmdcapath = None
+

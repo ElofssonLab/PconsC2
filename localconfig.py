@@ -12,41 +12,66 @@ if __name__ == '__main__':
 # Directory where PconsC in the distributable package is located
 root = os.path.dirname(os.path.abspath(sys.argv[0])) + '/'
 
+### Working directory ###
+rundir = os.getcwd() + '/'
+
+if not 'PconsC2' in root:
+    root += 'PconsC2/'
+
+# Look if PconsC2 or Rosetta dependencies need to be checked
+rosetta_flag = False
+if 'rosetta' in root:
+    rosetta_flag = True
+    root = '/'.join(root.split('/')[:-3]) + '/src/'
 
 ########################################################
 ### Please adjust the following paths to your system ###
 ########################################################
 
+### Path to root folder of your Rosetta installation ###
+# REQUIRES: Rosetta 3.5 or weekly build
+rosettadir = '/home/felix/Software/rosetta_2014.34.57213_bundle'
+
 ### Jackhmmer executable ###
-jackhmmer = root + 'dependencies/hmmer-3.0/src/jackhmmer'
+jackhmmer = '/usr/bin/jackhmmer'
 
 ### HHblits executable ###
-hhblits = root + 'dependencies/hhsuite-2.0.16/bin/hhblits'
+hhblits = '/usr/bin/hhblits'
 
 ### PSICOV executable ###
-psicov = root + 'dependencies/psicov-1.11/psicov'
+psicov = '/usr/local/bin/psicov'
 
 ### NetSurfP executable ###
-netsurf = root + 'dependencies/netsurfp-1.0/netsurfp'
+netsurf = '/home/felix/Software/netsurfp-1.0/netsurfp'
 
 ### PSIPRED executable ###
-psipred = root + 'dependencies/psipred/runpsipred'
+psipred = '/home/felix/Software/psipred/bin/psipred'
+
+### Path to TM-score ###
+# only needed if result should be compared to native structure
+tmscore_binary = '/usr/bin/TMscore'
 
 ### MATLAB executable ###
-# Please set this variable to None if you don't have access to matlab. 
-# PconsFold will then try to use the compiled version. 
+# Please set this variable to None if you don't have access to matlab.
+# PconsFold will then try to use the compiled version.
 #matlab = '/sw/apps/matlab/x86_64/8.1/bin/matlab'
-matlab = None
+matlab = '/home/felix/Software/MATLAB/R2014b/bin/matlab'
 
 ### Path to MATLAB compiler ###
 # Only needed if matlab is not available.
-matlabdir = '' 
-
-
+matlabdir = ''
 
 ########################################################
 ###  Please do not change anything below this line   ###
 ########################################################
+
+# Internal Rosetta paths
+rosetta_db_dir = rosettadir + '/main/database'
+rosetta_binary_dir = rosettadir + '/main/source/bin'
+rosetta_make_fragments = rosettadir + '/tools/fragment_tools/make_fragments.pl'
+rosetta_abinitiorelax = rosetta_binary_dir + '/AbinitioRelax.linuxgccrelease'
+rosetta_extract = rosetta_binary_dir + '/extract_pdbs.linuxgccrelease'
+rosetta_relax = rosetta_binary_dir + '/relax.linuxgccrelease'
 
 # Paths to included scripts
 trim2jones = root + 'scripts/a3mToJones.py'
@@ -63,12 +88,11 @@ n_cores = multiprocessing.cpu_count()
 # Enable work-around for PSICOV not handling low complexity alignments
 psicovfail = True
 
-# Adjust plmdca path to either standalone or compiled, 
+# Adjust plmdca path to either standalone or compiled,
 # depending on presence of matlab.
 if matlab:
     plmdca = None # matlab licence present: do not use compiled version
-    plmdcapath = root + 'dependencies/plmDCA_symmetric_v2'
+    plmdcapath = '/home/felix/Software/plmDCA_symmetric_v3'
 else:
     plmdca = root + 'dependencies/plmdca_standalone/2012/build01/bin/plmdca'
     plmdcapath = None
-
