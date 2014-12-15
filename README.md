@@ -23,7 +23,7 @@ MATLAB is needed to run plmDCA. However, if MATLAB is not available you can also
 __Make sure__ all dependencies are working correctly and adjust the paths in `localconfig.py`.
 
 To run PconsC2 use:
-``'
+```
 ./run_pconsc2.py [-c <n_cores>] [-n n_decoys] [-m n_models]
                  [--p_psi <n_psicov_jobs>] [--p_plm <n_plmdca_jobs>]
                  [-f factor] [--norelax] [--nohoms] [--pconsc1]
