@@ -92,7 +92,10 @@ psicovfail = True
 # depending on presence of matlab.
 if matlab:
     plmdca = None # matlab licence present: do not use compiled version
-    plmdcapath = '/home/felix/Software/plmDCA_symmetric_v3'
+    # plmDCA_symmetric
+    # plmdcapath = '/home/felix/Software/plmDCA_symmetric_v3'
+    # plmDCA_asymmetric
+    plmdcapath = '/home/felix/Software/plmDCA_asymmetric_v2'
 else:
     plmdca = root + 'dependencies/plmdca_standalone/2012/build01/bin/plmdca'
     plmdcapath = None
