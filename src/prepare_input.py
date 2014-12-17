@@ -83,12 +83,18 @@ def run_cpred_job(i, seqfile, method, n_cores, n_jobs):
                 if plmdca:
                     #t = check_output([plmdca, matlabdir, seqfile + '.jh' + names[i] + ".trimmed", seqfile + '.jh' + names[i] + ".plmdca", "0.01", "0.01", "0.1", str(n_cores)])
                     #t = check_output([plmdca, input_fname, c_fname, "0.01", "0.01", "0.1", str(n_cores)])
-                    t = check_output([plmdca, input_fname, c_fname, "0.01", "0.01", "0.1", str(plmdca_cores)])
+
+                    # plmDCA_symmetric
+                    #t = check_output([plmdca, input_fname, c_fname, "0.01", "0.01", "0.1", str(plmdca_cores)])
+                    # plmDCA_asymmetric
+                    t = check_output([plmdca, input_fname, c_fname, "0.1", str(plmdca_cores)])
                 else:
                     #t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + seqfile + '.' + names[i] + ".trimmed', '" + seqfile + '.' + names[i] + ".plmdca', 0.01, 0.01, 0.1, " + str(n_cores) + "); exit"])
-                    ### ORIGINAL ###
-                    t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + input_fname  + "', '" + c_fname + "', 0.01, 0.01, 0.1, " + str(plmdca_cores) + "); exit"])
                     #t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + seqfile + '.hh' + names[i] + ".trimmed', '" + seqfile + '.hh' + names[i] + ".plmdca', 0.01, 0.01, 0.1, " + str(n_cores) + "); exit"])
+                    # plmDCA_symmetric
+                    #t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_symmetric ( '" + input_fname  + "', '" + c_fname + "', 0.01, 0.01, 0.1, " + str(plmdca_cores) + "); exit"])
+                    # plmDCA_asymmetric
+                    t = check_output([matlab, '-nodesktop', '-nosplash', '-r', "path(path, '" + plmdcapath + "'); path(path, '" + plmdcapath + "/functions'); path(path, '" + plmdcapath + "/3rd_party_code/minFunc/'); plmDCA_asymmetric ( '" + input_fname  + "', '" + c_fname + "', 0.1, " + str(plmdca_cores) + "); exit"])
 
             elif method == 'psicov':
                 input_fname = seqfile + '.' + names[i] + '.jones'
