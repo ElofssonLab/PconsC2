@@ -1,0 +1,9 @@
+-in:file:fasta <FASTAFILE> 
+-in:file:frag3 <3MER_FRAGMENTS>
+-in:file:frag9 <9MER_FRAGMENTS> 
+-use_filters true 
+-constraints:cst_file <CONSTRAINTS> 
+-database <ROSETTA_DB> 
+-psipred_ss2 <PSIPREDFILE> 
+-out:nstruct <N_DECOYS>
+-seed_offset <SEED_OFFSET>
