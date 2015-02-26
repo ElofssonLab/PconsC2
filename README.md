@@ -6,7 +6,6 @@ Improved contact predictions using the recognition of protein like contact patte
 
 ## Dependencies:
 
-- [Rosetta v3.5 or weekly built](https://www.rosettacommons.org/software)
 - [NetSurfP 1.1](http://www.cbs.dtu.dk/services/NetSurfP/)
 - [PSIPRED v3.5](http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/)
 - [Jackhmmer from HMMER v3.0 or higher](http://hmmer.janelia.org/)
@@ -15,6 +14,7 @@ Improved contact predictions using the recognition of protein like contact patte
 - [plmDCA asymmetric](http://plmdca.csc.kth.se/)
 - either MATLAB v8.1 or higher
 - or [MATLAB Compiler Runtime (MCR) v8.1](http://www.mathworks.se/products/compiler/mcr/)
+- (optional: [Rosetta v3.5 or weekly built](https://www.rosettacommons.org/software))
 
 MATLAB is needed to run plmDCA. However, if MATLAB is not available you can also use a compiled version of plmDCA. For the compiled version to run you need to provide a path to MCR.
 
@@ -28,6 +28,7 @@ To run PconsC2 use:
 ./run_pconsc2.py [-c <n_cores>] [-n n_decoys] [-m n_models]
                  [--p_psi <n_psicov_jobs>] [--p_plm <n_plmdca_jobs>]
                  [-f factor] [--norelax] [--nohoms] [--pconsc1]
+                 [--rosetta]
                  <hhblits_database> <jackhmmer_database> <sequence file>
 ```
 - Required:
@@ -40,8 +41,9 @@ To run PconsC2 use:
   - `n_plmdca_jobs` specifies the number of plmDCA instances run in parallel (default: min(2, n_cores)).
   - `n_psicov_jobs` specifies the number of PSICOV instances run in parallel (default: min(2, n_cores)).
   - `factor` determines the number of constraints used to fold the protein, which is: factor * length_of_the_input_sequence (default: 1.0).
-  - `norelax` is a flag that supresses relaxation of the final models. This can be used to quickly extract structures in the end.
-  - `nohoms` is a flag that ensures that homologous structures are excluded from fragment picking. This is only useful in test cases if the model quality needs to be evaluated with a known structure.
+  - `rosetta` flag to run rosetta and produce a structural model based on predicted contacts.
+  - `norelax` is a flag that supresses relaxation of the final models. This can be used to quickly extract structures in the end (only used if rosetta flag specified).
+  - `nohoms` is a flag that ensures that homologous structures are excluded from fragment picking. This is only useful in test cases if the model quality needs to be evaluated with a known structure (only used if rosetta flag specified).
   - `--pconsc1` flag runs PconsC1 instead of PconsC2
 
 ---

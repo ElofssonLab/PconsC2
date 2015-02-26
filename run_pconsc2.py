@@ -24,7 +24,7 @@ if len(sys.argv) < 4:
     sys.stderr.write('Incorrect number of command line arguments.\n')
     sys.stderr.write('Usage: ./%s [-c <n_cores>] [-n n_decoys] [-m n_models]\n' % sys.argv[0].strip('./'))
     sys.stderr.write('                        [--p_psi <n_psicov_jobs>] [--p_plm <n_plmdca_jobs>]\n')
-    sys.stderr.write('                        [-f factor] [--norelax] [--nohoms] [--pconsc1]\n')
+    sys.stderr.write('                        [-f factor] [--norelax] [--nohoms] [--pconsc1] [--rosetta]\n')
     sys.stderr.write('                        <hhblits db> <jackhmmer db> <sequence file>\n\n')
     sys.exit(0)
 
@@ -33,6 +33,13 @@ from src import predict_all
 from folding.rosetta import prepare_input
 from folding.rosetta import fold
 from folding.rosetta import extract
+
+
+rosetta_flag = False
+if '--rosetta' in sys.argv:
+    idx = sys.argv.index('--rosetta')
+    rosetta_flag = True
+    del sys.argv[idx]
 
 sys.stderr.write('\nTesting dependencies...\n')
 
@@ -112,78 +119,78 @@ if rosetta_flag:
         sys.stderr.write('is present and working:\n')
         sys.stderr.write(rosetta_relax + '\n')
         sys.exit(1)
-else:
-    ### Check Jackhmmer ###
+
+### Check Jackhmmer ###
+try:
+    f = open(os.devnull, "w")
+    x  = subprocess.call([jackhmmer, '-h'], stdout=f, stderr=f)
+    f.close()
+except Exception as e:
+    sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
+    sys.stderr.write(jackhmmer + ' -h \n\n')
+    sys.stderr.write('Chosen jackhmmer binary does not seem to work!\n')
+    sys.exit(1)
+
+### Check HHblits ###
+try:
+    f = open(os.devnull, "w")
+    x  = subprocess.call([hhblits, '-h'], stderr=f, stdout=f)
+    f.close()
+    pass
+except:
+    sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
+    sys.stderr.write(hhblist + ' -h \n\n')
+    sys.stderr.write('Chosen HHblits binary does not seem to work!\n')
+    sys.exit(1)
+
+### Check PSICOV ###
+try:
+    f = open(os.devnull, "w")
+    x  = subprocess.call([psicov, root + '/extras/psicovtest.fas'], stdout=f, stderr=f)
+    f.close()
+except Exception as e:
+    sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
+    sys.stderr.write(psicov + root + '/extras/psicovtest.fas \n\n')
+    sys.stderr.write('Chosen PSICOV binary does not seem to work!\n')
+    sys.exit(1)
+
+if x == 255 and not psicovfail:
+    sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
+    sys.stderr.write('Your version of PSICOV refuses to handle low-complexity alignments.\n')
+    sys.stderr.write('We recommend patching the PSICOV code to allow this. See 00README\n')
+    sys.stderr.write('If you _really_ do not want to do that, please change psicovfail flag in \n')
+    sys.stderr.write(os.path.abspath(sys.argv[0]) + ' to True.\n')
+    sys.stderr.write('This will (most probably) affect the prediction performance.\n')
+    sys.exit(1)
+
+
+### Check plmDCA ###
+if plmdca:
     try:
         f = open(os.devnull, "w")
-        x  = subprocess.call([jackhmmer, '-h'], stdout=f, stderr=f)
+        x  = subprocess.call([plmdca, '-h'], stdout=f, stderr=f)
         f.close()
     except Exception as e:
         sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
-        sys.stderr.write(jackhmmer + ' -h \n\n')
-        sys.stderr.write('Chosen jackhmmer binary does not seem to work!\n')
+        sys.stderr.write(plmdca +  ' -h \n\n')
+        sys.stderr.write('Chosen plmdca binary does not seem to work!\n')
         sys.exit(1)
-
-    ### Check HHblits ###
+elif matlab:
     try:
         f = open(os.devnull, "w")
-        x  = subprocess.call([hhblits, '-h'], stderr=f, stdout=f)
+        x  = subprocess.call([matlab, '-h'], stdout=f, stderr=f)
         f.close()
-        pass
     except:
         sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
-        sys.stderr.write(hhblist + ' -h \n\n')
-        sys.stderr.write('Chosen HHblits binary does not seem to work!\n')
+        sys.stderr.write('Chosen MATLAB binary does not seem to work!\n')
+        sys.stderr.write(matlab + ' -h \n\n')
+        sys.stderr.write('You can get MCR \n')
+        sys.stderr.write('http://www.mathworks.se/products/compiler/mcr/\n')
         sys.exit(1)
-
-    ### Check PSICOV ###
-    try:
-        f = open(os.devnull, "w")
-        x  = subprocess.call([psicov, root + '/extras/psicovtest.fas'], stdout=f, stderr=f)
-        f.close()
-    except Exception as e:
-        sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
-        sys.stderr.write(psicov + root + '/extras/psicovtest.fas \n\n')
-        sys.stderr.write('Chosen PSICOV binary does not seem to work!\n')
-        sys.exit(1)
-
-    if x == 255 and not psicovfail:
-        sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
-        sys.stderr.write('Your version of PSICOV refuses to handle low-complexity alignments.\n')
-        sys.stderr.write('We recommend patching the PSICOV code to allow this. See 00README\n')
-        sys.stderr.write('If you _really_ do not want to do that, please change psicovfail flag in \n')
-        sys.stderr.write(os.path.abspath(sys.argv[0]) + ' to True.\n')
-        sys.stderr.write('This will (most probably) affect the prediction performance.\n')
-        sys.exit(1)
-
-
-    ### Check plmDCA ###
-    if plmdca:
-        try:
-            f = open(os.devnull, "w")
-            x  = subprocess.call([plmdca, '-h'], stdout=f, stderr=f)
-            f.close()
-        except Exception as e:
-            sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
-            sys.stderr.write(plmdca +  ' -h \n\n')
-            sys.stderr.write('Chosen plmdca binary does not seem to work!\n')
-            sys.exit(1)
-    elif matlab:
-        try:
-            f = open(os.devnull, "w")
-            x  = subprocess.call([matlab, '-h'], stdout=f, stderr=f)
-            f.close()
-        except:
-            sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
-            sys.stderr.write('Chosen MATLAB binary does not seem to work!\n')
-            sys.stderr.write(matlab + ' -h \n\n')
-            sys.stderr.write('You can get MCR \n')
-            sys.stderr.write('http://www.mathworks.se/products/compiler/mcr/\n')
-            sys.exit(1)
-    else:
-        sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
-        sys.stderr.write('You must set one of plmdca or matlab in localconfig.py!\n')
-        sys.exit(1)
+else:
+    sys.stderr.write('*****************\n   ERROR!\n*****************\n\n')
+    sys.stderr.write('You must set one of plmdca or matlab in localconfig.py!\n')
+    sys.exit(1)
 
 
 sys.stderr.write('Dependencies OK.\n')
@@ -287,20 +294,22 @@ constraintfile = contactfile + '-' + str(factor) + '.constraints'
 
 
 shutil.copyfile(root + 'localconfig.py', root + 'src/localconfig.py')
-shutil.copyfile(root + 'localconfig.py', root + '/folding/rosetta/localconfig.py')
 
 # run contact prediction
 predict_all.main(hhblitsdb, jackhmmerdb, seqfile, n_cores=n_cores, n_jobs_plm=n_jobs_plm, n_jobs_psi=n_jobs_psi, pconsc1_flag=pconsc1_flag)
 
+# run rosetta folding protocol 
+if rosetta_flag:
+    shutil.copyfile(root + 'localconfig.py', root + '/folding/rosetta/localconfig.py')
+    rundir_postfix = 'rosetta'
+    prepare_input.main(seqfile, contactfile, factor=factor, nohoms_flag=nohoms_flag)
+    fold.main(seqfile, constraintfile, n_cores=n_cores, n_decoys=n_decoys, rundir_postfix=rundir_postfix)
+    extract.main(seqfile, n_cores=n_cores, n_models=n_models, relax_flag=relax_flag, rundir_postfix=rundir_postfix)
 
-rundir_postfix = 'rosetta'
-prepare_input.main(seqfile, contactfile, factor=factor, nohoms_flag=nohoms_flag)
-fold.main(seqfile, constraintfile, n_cores=n_cores, n_decoys=n_decoys, rundir_postfix=rundir_postfix)
-extract.main(seqfile, n_cores=n_cores, n_models=n_models, relax_flag=relax_flag, rundir_postfix=rundir_postfix)
+    ### collect the results in seperate folder
+    subprocess.call(['mkdir', rundir + 'rosetta_results'])
+    subprocess.call('mv %s/%s/*.run_*.*.pdb %s/rosetta_results' % (rundir, rundir_postfix, rundir), shell=True)
 
-### collect the results in seperate folder
-subprocess.call(['mkdir', rundir + 'rosetta_results'])
-subprocess.call('mv %s/%s/*.run_*.*.pdb %s/rosetta_results' % (rundir, rundir_postfix, rundir), shell=True)
+    if os.path.exists(rundir + 'native.pdb'):
+            subprocess.call(['mv', rundir + rundir_postfix + '/TMscores.txt', rundir + 'rosetta_results'])
 
-if os.path.exists(rundir + 'native.pdb'):
-        subprocess.call(['mv', rundir + rundir_postfix + '/TMscores.txt', rundir + 'rosetta_results'])
