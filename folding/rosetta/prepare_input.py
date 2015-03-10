@@ -4,6 +4,8 @@ import os
 import subprocess
 
 import reformat_contacts
+
+sys.path.append("../../")
 from localconfig import *
 
 

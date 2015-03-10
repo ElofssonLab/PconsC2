@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-from localconfig import *
 from datetime import datetime
 import sys, subprocess, os, math
 import multiprocessing
 
+sys.path.append("../")
+from localconfig import *
 
 names = ['jhE4', 'jhE0', 'jhE10', 'jhE40', 'hhE4', 'hhE0', 'hhE10', 'hhE40']
 cutoffs = ['1e-4', '1', '1e-10', '1e-40','1e-4', '1', '1e-10', '1e-40']

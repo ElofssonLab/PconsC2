@@ -5,6 +5,7 @@ import math
 from subprocess import call
 from subprocess import Popen
 
+sys.path.append("../../")
 from localconfig import *
 
 

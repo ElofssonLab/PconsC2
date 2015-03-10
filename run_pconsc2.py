@@ -293,14 +293,14 @@ else:
 constraintfile = contactfile + '-' + str(factor) + '.constraints'
 
 
-shutil.copyfile(root + 'localconfig.py', root + 'src/localconfig.py')
+#shutil.copyfile(root + 'localconfig.py', root + 'src/localconfig.py')
 
 # run contact prediction
 predict_all.main(hhblitsdb, jackhmmerdb, seqfile, n_cores=n_cores, n_jobs_plm=n_jobs_plm, n_jobs_psi=n_jobs_psi, pconsc1_flag=pconsc1_flag)
 
 # run rosetta folding protocol 
 if rosetta_flag:
-    shutil.copyfile(root + 'localconfig.py', root + '/folding/rosetta/localconfig.py')
+    #shutil.copyfile(root + 'localconfig.py', root + '/folding/rosetta/localconfig.py')
     rundir_postfix = 'rosetta'
     prepare_input.main(seqfile, contactfile, factor=factor, nohoms_flag=nohoms_flag)
     fold.main(seqfile, constraintfile, n_cores=n_cores, n_decoys=n_decoys, rundir_postfix=rundir_postfix)

@@ -1,8 +1,10 @@
 #!/usr/bin/env python
-from localconfig import *
 import prepare_input as prep
 from datetime import datetime
 import sys, subprocess, os
+
+sys.path.append("../")
+from localconfig import *
 
 plot_flag = False
 try:

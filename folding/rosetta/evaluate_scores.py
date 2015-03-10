@@ -8,6 +8,8 @@ import subprocess
 import parse_rosetta_scores
 import parse_tmscore
 import fix_numbering
+
+sys.path.append("../../")
 from localconfig import *
 
 def check_output(command):

@@ -5,6 +5,7 @@ from subprocess import call
 
 import evaluate_scores as ev
 
+sys.path.append("../../")
 from localconfig import *
 
 
