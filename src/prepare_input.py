@@ -173,11 +173,11 @@ def run_pconsc2_dependencies(hhblitsdb, seqfile, n_cores=1):
 
     netsurfpredictionname = seqfile + '.rsa'
 
-    if not os.path.exists(seqfile + '.horiz'):
+    if not os.path.exists(seqfile + '.ss2'):
         sys.stderr.write(str(datetime.now()) + ': running Psipred\nThis may take quite a few minutes!\n')
         check_output([psipred, seqfile + '.fasta'])
 
-    sspredictionname = seqfile + '.horiz'
+    sspredictionname = seqfile + '.ss2'
 
     pssmaliname =  seqfile + '.hhE0.a3m'
     if not os.path.exists(pssmaliname):
