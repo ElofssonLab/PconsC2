@@ -19,3 +19,5 @@ for l in infile:
     elif '>' in l and counter == 0:
         sys.stdout.write('>target/1-100\n')
         counter += 1
+
+sys.stdout.write('\n')
