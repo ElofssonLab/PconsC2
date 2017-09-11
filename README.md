@@ -46,5 +46,7 @@ To run PconsC2 use:
   - `nohoms` is a flag that ensures that homologous structures are excluded from fragment picking. This is only useful in test cases if the model quality needs to be evaluated with a known structure (only used if rosetta flag specified).
   - `--pconsc1` flag runs PconsC1 instead of PconsC2
 
----
+## Citation
+
+[M.J. Skwark, D. Raimondi, M. Michel, A. Elofsson. Improved contact predictions using the recognition of protein like contact patterns. PloS Computational Biology 10(11):e1003889, 2014.](https://doi.org/10.1371/journal.pcbi.1003889)
 
